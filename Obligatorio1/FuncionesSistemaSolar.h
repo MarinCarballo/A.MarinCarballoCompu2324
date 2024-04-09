@@ -58,17 +58,58 @@ void Verlet(double* a,double* m, double* r, double* v, int n, int d, double h){
             }
     }
 }
-
-void Reescalado(double* r, double* t, double* m, int n, int d){
+//Función que reescala mis constantes, para trabajar con datos menos pesados.
+void ReescaladoSolar(double* r, double t, double* v, double* m, int n, int d){
     int i,k;
     double c=1.496e11;
     double G=6.67e-11;
     double M=1.99e30;
     for(i=0; i<n; i++){
+        *(m+i)= *(m+i)/M;
         for(k=0;k<d; k++){
-            *(r+i*d+k)=*(r+i*d+k)/c
-            *(m+i*d+k)= *(m+i*d+k)/M;
+            *(r+i*d+k)=*(r+i*d+k)/c;
+            *(v+i*d+k)= *(v+i*d+k)*sqrt(c/(G*M));
         }
     }
+    t=sqrt((G*M)/(pow(c,3)))*t;
+}
 
+void Energia(double* T, double* U, double* r, double* m, double* v, int n, int d)
+{
+int i, j, k;
+double R[n][n][d];
+double M[n][n];
+    for (i = 0; i < n; i++) {
+        *(T+i)=0;
+    }
+    for (i = 0; i < n; i++) {
+            for (k = 0; k < d; k++) {
+                *(T+i)+=(*(v+i*d+k)*(*(v+i*d+k)))/2;//Calculo energía cinética.
+            }
+    }
+    //CALCULO R ENTRE PLANETAS.
+    for (i = 0; i < n; i++) { // Ciclo para cada planeta
+        for (j = i; j < n; j++) {    // Ciclo para interactuar con cada otro planeta
+            // Calcular R entre los planetas i y j
+            for (k = 0; k < d; k++) {//Iteración entre dimensiones x,y.
+                R[i][j][k] = *(r + d*i + k) - *(r + d*j + k);//i*d es para que me salte al planeta i, saltandose las dimensiones, que al final son posiciones.
+                R[j][i][k]=-R[i][j][k];//Para la parte inferior de la matriz de distancias R. (ANTISIMÉTRICA)
+            }
+            M[i][j]=sqrt(pow(R[i][j][0],2)+ pow(R[i][j][1],2)); //Matriz de módulos
+            M[j][i]=M[i][j];//Hago la matriz simétrica.
+        }
+    }
+    
+    //POTENCIAL
+    for(i=0;i<n;i++){
+        *(U+i)=0;
+    }
+    for (i = 0; i < n; i++) {//Para un planeta
+        for (j = 0; j < n; j++) {// Ciclo para interactuar con cada otro planeta
+            if(i!=j){//La aceleración de un planeta consigo mismo es 0, no me interesa.
+            // Calcular U entre los planetas i y j
+                *(U+i)+= -*(m+j)/M[i][j];//sumatoria de potenciales
+            }
+        }
+    }
 }

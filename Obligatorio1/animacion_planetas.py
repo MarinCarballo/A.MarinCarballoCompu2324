@@ -53,7 +53,7 @@ file_out = "planetas" # Nombre del fichero de salida (sin extensión)
 # Límites de los ejes X e Y
 x_min = -25
 x_max = 25
-y_min = -25 
+y_min = -25
 y_max = 25
 
 interval = 10 # Tiempo entre fotogramas en milisegundos
@@ -66,8 +66,8 @@ dpi = 150 # Calidad del vídeo de salida (dots per inch)
 # Radio del planeta, en las mismas unidades que la posición
 # Puede ser un número (el radio de todos los planetas) o una lista con
 # el radio de cada uno
-planet_radius = 0.25
-#planet_radius = [0.5, 0.7, 1.1]
+planet_radius = 0.1
+#planet_radius = [1.5, 0.7, 1.1]
 
 
 # Lectura del fichero de datos
