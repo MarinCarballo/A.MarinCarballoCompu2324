@@ -17,13 +17,15 @@
 
 int main()
 {
-    int i,j,n,d, b;//n es el número de planetas, d es la dimensión, para d=2 (x,y).
+    int i,j,n,d, b, cont;//n es el número de planetas, d es la dimensión, para d=2 (x,y).
     int total;
+    double c=1.496e11;
+    double G=6.67e-11;
+    double M=1.99e30;
     n=7;
     d=2;
     double a[n][d], r[n][d], v[n][d], m[n], T[n], U[n];
-    double h, t;
-    //REESCALAMIENTO
+    double h, t, P;
     FILE *fichero_ent, *fichero_sal,*fichero_energia;
 
     fichero_ent = fopen("Iniciales.txt", "r");  
@@ -39,8 +41,12 @@ int main()
     {
         i++;
     }
-
-    ReescaladoSolar(rp, t, vp, mp, n, d);
+    //Tiempo: 1 año
+    double tmax;
+    tmax=1;
+    tmax=tmax*(365*24*3600);
+    ReescaladoSolar(rp, tmax, vp, mp, n, d);
+    tmax=sqrt((G*M)/(pow(c,3)))*tmax;
 
     fichero_sal=fopen("datos.txt","w");
     fichero_energia=fopen("energias.txt", "w");
@@ -49,17 +55,28 @@ int main()
             }
 
     Aceleracion(ap, rp, mp, 2, 2);
+
     h=0.1;//PASO
-    for(t=0; t<200; t=t+h){
+    for(t=0; t<tmax; t=t+h){
         fprintf(fichero_sal, "\n");
         Verlet(ap, mp, rp, vp, n, d, h);
         Energia(Tp, Up, rp, mp, vp, n, d);
         for(b=0;b<n;b++){
         fprintf(fichero_sal, "%f, %f \n", r[b][0], r[b][1]);
         }
+        if(r[4][1]>-0.1 && r[4][1]<0.1){//FUNCION QUE MIRA SI ESTOY EN y=0.
+            cont++;
+        }
         //Aquí eligo el planeta del que quiero ver la energía, asi es más fácil.
         fprintf(fichero_energia, "%f, %f, %f, %f \n", T[1], U[1], U[1]+T[1], t);
     }
+    tmax=tmax/(sqrt((G*M)/(pow(c,3))));
+    tmax=tmax/(24*3600);
+    t=t/(3600*24);
+    P=(((cont/2)/tmax));//PERIODO: vuelta/dias
+    P=1/P;//dias para dar una vuelta.
+    printf("%lf, ", P);
+    fclose(fichero_energia);
     fclose(fichero_ent);
     fclose(fichero_sal);
     return 0;

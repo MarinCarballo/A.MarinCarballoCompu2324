@@ -8,7 +8,7 @@ void Sumar_Vec(double* v1, double* v2, int n){
         *(v1+i)=*(v1+i)+*(v2+i);//Esto hace que vaya aumentando las posiciones del puntero v1, mientras le voy sumando a cada posición el valor de v2.
     }    
 }
-
+//Funcion que me calcula las aceleraciones de cada planeta respecto a los otros.
 void Aceleracion(double* a, double* r, double* m, int n, int d) {
     int i, j, k;
     double R[n][n][d];
@@ -41,7 +41,7 @@ void Aceleracion(double* a, double* r, double* m, int n, int d) {
         }
     }
 }
-
+//Funcion que aplica el algoritmo de Verlet, para calcular nuevas posiciones de los planetas.
 void Verlet(double* a,double* m, double* r, double* v, int n, int d, double h){
     int i, j, k, z;
     double w[n][d];//Vector w temporal.
@@ -74,6 +74,7 @@ void ReescaladoSolar(double* r, double t, double* v, double* m, int n, int d){
     t=sqrt((G*M)/(pow(c,3)))*t;
 }
 
+//FUNCION QUE CALCULA LAS ENERGIAS DE UN PLANETA A LO LARGO DE SU PERIODO ORBITAL.
 void Energia(double* T, double* U, double* r, double* m, double* v, int n, int d)
 {
 int i, j, k;
@@ -112,4 +113,8 @@ double M[n][n];
             }
         }
     }
+}
+//Funcion que calcula el periodo de un planeta.
+void Periodo(){
+    
 }

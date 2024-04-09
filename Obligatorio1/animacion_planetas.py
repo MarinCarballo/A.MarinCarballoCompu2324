@@ -51,12 +51,12 @@ file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCa
 file_out = "planetas" # Nombre del fichero de salida (sin extensión)
 
 # Límites de los ejes X e Y
-x_min = -25
-x_max = 25
-y_min = -25
-y_max = 25
+x_min = -10
+x_max = 10
+y_min = -10
+y_max = 10
 
-interval = 10 # Tiempo entre fotogramas en milisegundos
+interval = 30 # Tiempo entre fotogramas en milisegundos
 show_trail = True # Muestra la "estela" del planeta
 trail_width = 1 # Ancho de la estela
 save_to_file = False # False: muestra la animación por pantalla,
