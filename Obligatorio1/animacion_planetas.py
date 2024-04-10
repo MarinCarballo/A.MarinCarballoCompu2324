@@ -47,16 +47,16 @@ import numpy as np
 
 # Parámetros
 # ========================================
-file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Obligatorio1/datos_geocentricos.txt" # Nombre del fichero de datos
+file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Obligatorio1/datos.txt" # Nombre del fichero de datos
 file_out = "planetas" # Nombre del fichero de salida (sin extensión)
 
 # Límites de los ejes X e Y
-x_min = -10
-x_max = 10
-y_min = -10
-y_max = 10
+x_min = -50
+x_max = 50
+y_min = -50
+y_max = 50
 
-interval = 10 # Tiempo entre fotogramas en milisegundos
+interval = 1# Tiempo entre fotogramas en milisegundos
 show_trail = True # Muestra la "estela" del planeta
 trail_width = 1 # Ancho de la estela
 save_to_file = False # False: muestra la animación por pantalla,
@@ -67,7 +67,7 @@ dpi = 150 # Calidad del vídeo de salida (dots per inch)
 # Puede ser un número (el radio de todos los planetas) o una lista con
 # el radio de cada uno
 #planet_radius = 0.1
-planet_radius = [0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+planet_radius = [0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
 
 # Lectura del fichero de datos

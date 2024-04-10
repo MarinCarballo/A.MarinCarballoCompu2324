@@ -2,7 +2,7 @@ import math as mt
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-
+#Codigo de mi colega Dani.
 file_name =  'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Obligatorio1/energias.txt'
 
 data = pd.read_csv(file_name, delimiter=',', header=1, names=['m', 'V', 'E', 't'])
