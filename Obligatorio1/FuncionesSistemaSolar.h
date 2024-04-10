@@ -114,7 +114,13 @@ double M[n][n];
         }
     }
 }
-//Funcion que calcula el periodo de un planeta.
-void Periodo(){
-    
+//Funcion que me convierte el modelo en geocentrico
+void Geocentrico(double* r, double* rt, int n, int d){
+    int i, k;
+    for (i = 0; i < n; i++) {//Para un planeta
+        for (k = 0; k < d; k++) {//Dimensiones
+                *(rt+i*d+k)=*(r+i*d+k)-*(r+3*d+k); //Le voy restando la posicion de la tierra (r+3*d+k)
+                // a cada planeta.
+        }
+    }
 }

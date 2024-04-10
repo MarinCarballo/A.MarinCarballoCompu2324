@@ -1,7 +1,7 @@
 //Simulación de la dinámica del sistema solar:
-//1.- Simulación t
-//2.- Calculo periodo
-//3.- Conservación energía y momento angular
+//1.- Simulación t, READY
+//2.- Calculo periodo, READY
+//3.- Conservación energía y momento angular, READY
 //4.- Heliocéntrico -> Geocéntrico r'=r-r_T
 //CONSEJOS DE LA PROFE:
     //h=1/1000. Uso de funciones y proteus.
@@ -17,68 +17,85 @@
 
 int main()
 {
-    int i,j,n,d, b, cont;//n es el número de planetas, d es la dimensión, para d=2 (x,y).
+    //DECLARACION DE VARIABLES
+    int i,j,n,d, b, cont;//n es el número de planetas, d es la dimensión, para d=2 (x,y). 
+    //Los demás son int para bucles.
     int total;
-    double c=1.496e11;
-    double G=6.67e-11;
-    double M=1.99e30;
-    n=7;
-    d=2;
-    double a[n][d], r[n][d], v[n][d], m[n], T[n], U[n];
-    double h, t, P;
-    FILE *fichero_ent, *fichero_sal,*fichero_energia;
+    double c=1.496e11, G=6.67e-11, M=1.99e30; //Constantes de reescalamiento
+    n=7;//Numero de planetas que se quiere simular.
+    d=2;//Dimensiones
+    double a[n][d], r[n][d], v[n][d], m[n], T[n], U[n], x[n][d], r_geo[n][d];//Vectores aceleracion, posicion, 
+    //velocidad, masa, energia cinetica, potencial y vector auxiliar para el periodo
+    double h, t, P, tper;//Paso, tiempo, periodo, tiempo del periodo
 
-    fichero_ent = fopen("Iniciales.txt", "r");  
+    FILE *fichero_ent, *fichero_sal,*fichero_energia, *fichero_geo;//Declaracion de ficheros usados.
+    fichero_ent = fopen("Iniciales.txt", "r");  //Se dan los datos iniciales
+
+    //Se apuntan los punteros a los vectores
     double* ap=a[0];
     double* rp=r[0];
     double* mp=m;
     double* vp=v[0];
     double* Tp=T;
     double* Up=U;
-    
+    double* r_geo_p=r_geo[0];
+    //Se escanean los datos iniciales.
     i = 0;
     while (fscanf(fichero_ent, "%lf, %lf, %lf, %lf, %lf", &m[i], &r[i][0], &r[i][1], &v[i][0], &v[i][1])!= EOF)
     {
         i++;
     }
-    //Tiempo: 1 año
+
+    //Tiempo: Se eligen durante cuanto años se quiere simular el sistema solar
     double tmax;
-    tmax=1;
-    tmax=tmax*(365*24*3600);
-    ReescaladoSolar(rp, tmax, vp, mp, n, d);
+    tmax=6;
+    tmax=tmax*(365*24*3600);//Se pasa a segundos
+    ReescaladoSolar(rp, tmax, vp, mp, n, d);//Se reescalan todas las variables
     tmax=sqrt((G*M)/(pow(c,3)))*tmax;
 
+    //Abro ficheros de posicion, geocentricos y energias.
     fichero_sal=fopen("datos.txt","w");
+    fichero_geo=fopen("datos_geocentricos.txt", "w");
     fichero_energia=fopen("energias.txt", "w");
-        for(b=0;b<n;b++){
-             fprintf(fichero_sal, "%f, %f \n", r[b][0], r[b][1]);
-            }
 
-    Aceleracion(ap, rp, mp, 2, 2);
-
-    h=0.1;//PASO
+    Aceleracion(ap, rp, mp, 2, 2);//Se calculan aceleraciones iniciales.
+    cont=0;
+    h=0.01;//PASO
     for(t=0; t<tmax; t=t+h){
-        fprintf(fichero_sal, "\n");
+        x[1][1]=r[1][1];//Se almacena el vector anterior a Verlet en x, para despues calcular si se ha dado una vuelta. 
+        //En el primer corchete se elige el planeta del que se quiere saber el periodo.
+
+        fprintf(fichero_sal, "\n");//Esto me deja espacios entre cada nueva iteracion de t.
+        fprintf(fichero_geo, "\n");
+
         Verlet(ap, mp, rp, vp, n, d, h);
         Energia(Tp, Up, rp, mp, vp, n, d);
+        Geocentrico(rp, r_geo_p, n, d);
         for(b=0;b<n;b++){
         fprintf(fichero_sal, "%f, %f \n", r[b][0], r[b][1]);
         }
-        if(r[4][1]>-0.1 && r[4][1]<0.1){//FUNCION QUE MIRA SI ESTOY EN y=0.
+        for(b=0;b<n;b++){
+        fprintf(fichero_geo, "%f, %f \n", r_geo[b][0], r_geo[b][1]);
+        }
+        if(r[1][1]*x[1][1]<0 && r[1][1]>=0){//Condicional que me mira si se dio una vuelta.
+        //Multiplica la posicion y anterior con la actual, Si <0, es que se dio una vuelta entera.
+        //Se apunta en tper el tiempo donde se ha realizado el periodo (vuelta) completo.
             cont++;
+            tper=t;
         }
         //Aquí eligo el planeta del que quiero ver la energía, asi es más fácil.
         fprintf(fichero_energia, "%f, %f, %f, %f \n", T[1], U[1], U[1]+T[1], t);
     }
-    tmax=tmax/(sqrt((G*M)/(pow(c,3))));
-    tmax=tmax/(24*3600);
-    t=t/(3600*24);
-    P=(((cont/2)/tmax));//PERIODO: vuelta/dias
+    tper=tper/(sqrt((G*M)/(pow(c,3))));//Reescalo el tiempo de vuelta.
+    tper=tper/(24*3600);//Lo paso a días.
+    P=cont/tper;//PERIODO: vuelta/dias.
     P=1/P;//dias para dar una vuelta.
-    printf("%lf, ", P);
+    printf("%lf, ", P);//Enseño mi periodo
+    //CIERRO FICHEROS
     fclose(fichero_energia);
     fclose(fichero_ent);
     fclose(fichero_sal);
+    fclose(fichero_geo);
     return 0;
-    }   
+    }
 
