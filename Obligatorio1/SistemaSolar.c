@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <time.h>
 #include "FuncionesSistemaSolar.h"
 
 int main()
 {
+    clock_t begin= clock();
     //DECLARACION DE VARIABLES
     int i,j,n,d, b, cont;//n es el número de planetas, d es la dimensión, para d=2 (x,y). 
     //Los demás son int para bucles.
@@ -38,7 +40,7 @@ int main()
 
     //Tiempo: Se eligen durante cuanto años se quiere simular el sistema solar
     double tmax;
-    tmax=20;
+    tmax=200;
     tmax=tmax*(365*24*3600);//Se pasa a segundos
     ReescaladoSolar(rp, tmax, vp, mp, n, d);//Se reescalan todas las variables
     tmax=sqrt((G*M)/(pow(c,3)))*tmax;
@@ -80,7 +82,7 @@ int main()
     tper=tper/(24*3600);//Lo paso a días.
     P=cont/tper;//PERIODO: vuelta/dias.
     P=1/P;//dias para dar una vuelta.
-    printf("Periodo=%lf dias.", P);//Enseño mi periodo
+    printf("Periodo=%lf dias. \n", P);//Enseño mi periodo
 
     //CIERRO FICHEROS
     fclose(fichero_energia);
@@ -88,6 +90,9 @@ int main()
     fclose(fichero_sal);
     fclose(fichero_geo);
     
+    clock_t end=clock();//Tiempo que ha tardado en ejecutarse
+    double tiempo= (double) (end-begin)/ CLOCKS_PER_SEC;
+    printf("Tiempo de compilacion=%lf \n", tiempo);
     return 0;
     }
 
