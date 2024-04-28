@@ -85,7 +85,7 @@ double M[n][n];
     }
     for (i = 0; i < n; i++) {
             for (k = 0; k < d; k++) {
-                *(T+i)+=(*(v+i*d+k)*(*(v+i*d+k)))/2;//Calculo energía cinética.
+                *(T+i)+=10e7*(*(m+i))*(*(v+i*d+k)*(*(v+i*d+k)))/2;//Calculo energía cinética.
             }
     }
     //CALCULO R ENTRE PLANETAS.
@@ -109,7 +109,7 @@ double M[n][n];
         for (j = 0; j < n; j++) {// Ciclo para interactuar con cada otro planeta
             if(i!=j){//La aceleración de un planeta consigo mismo es 0, no me interesa.
             // Calcular U entre los planetas i y j
-                *(U+i)+= -*(m+j)/M[i][j];//sumatoria de potenciales
+                *(U+i)+= -10e7*(*(m+i))*(*(m+j))/M[i][j];//sumatoria de potenciales
             }
         }
     }

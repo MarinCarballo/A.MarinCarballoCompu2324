@@ -51,10 +51,10 @@ file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCa
 file_out = "planetas" # Nombre del fichero de salida (sin extensión)
 
 # Límites de los ejes X e Y
-x_min = -50
-x_max = 50
-y_min = -50
-y_max = 50
+x_min = -20
+x_max = 20
+y_min = -20
+y_max = 20
 
 interval = 1# Tiempo entre fotogramas en milisegundos
 show_trail = True # Muestra la "estela" del planeta
@@ -67,7 +67,7 @@ dpi = 150 # Calidad del vídeo de salida (dots per inch)
 # Puede ser un número (el radio de todos los planetas) o una lista con
 # el radio de cada uno
 #planet_radius = 0.1
-planet_radius = [0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+planet_radius = 0.1
 
 
 # Lectura del fichero de datos
