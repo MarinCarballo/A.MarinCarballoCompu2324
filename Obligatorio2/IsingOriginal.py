@@ -6,7 +6,7 @@ import io
 from numba import jit
 #Funciones
 @jit(nopython=True)
-def CondicionesContorno(n,m, N):
+def CondicionesContorno(n,m):
     #Condiciones de contorno
     if(n==N-1):#Si mi n está en el extremo N, quiero que a(que representa n+1 en E) 
         a=0  #sea el del otro extremo
@@ -46,7 +46,7 @@ while(t<Tmax):
         n=np.random.randint(0,N)
         m=np.random.randint(0,N)
         #Condiciones de contorno
-        a,b,c,d=CondicionesContorno(n,m, N)
+        a,b,c,d=CondicionesContorno(n,m)
 
         E=2.0*s[n][m]*(s[a][m]+s[b][m]+s[n][c]+s[n][d])
 
