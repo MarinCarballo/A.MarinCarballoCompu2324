@@ -10,11 +10,7 @@ int main()
 {
     clock_t begin= clock();
     //DECLARACION DE VARIABLES
-<<<<<<< HEAD
     int i,j,n,d, b, s,z;//n es el número de planetas, d es la dimensión, para d=2 (x,y). 
-=======
-    int i,j,n,d, b, cont, s,z;//n es el número de planetas, d es la dimensión, para d=2 (x,y). 
->>>>>>> b97bc14a2565d83c564ff321b968889cc5db77ea
     //Los demás son int para bucles.
     int total;
     double c=1.496e11, G=6.67e-11, M=1.99e30; //Constantes de reescalamiento
@@ -44,11 +40,7 @@ int main()
 
     //Tiempo: Se eligen durante cuanto años se quiere simular el sistema solar
     double tmax;
-<<<<<<< HEAD
     tmax=300;
-=======
-    tmax=1;
->>>>>>> b97bc14a2565d83c564ff321b968889cc5db77ea
     tmax=tmax*(365*24*3600);//Se pasa a segundos
     ReescaladoSolar(rp, tmax, vp, mp, n, d);//Se reescalan todas las variables
     tmax=sqrt((G*M)/(pow(c,3)))*tmax;
@@ -61,29 +53,17 @@ int main()
 
     Aceleracion(ap, rp, mp, 2, 2);//Se calculan aceleraciones iniciales.
     h=0.01;//PASO
-<<<<<<< HEAD
     z=0;
     for(t=0; t<tmax; t=t+h){
         z++;
         for(s=0; s<n;s++){
         x[s][1]=r[s][1];
         }//Se almacena el vector anterior a Verlet en x, para despues calcular si se ha dado una vuelta. 
-=======
-    s=1;//Numero del planeta del cual quieres saber el periodo
-    z=0;
-    for(t=0; t<tmax; t=t+h){
-        z++;
-        x[s][1]=r[s][1];//Se almacena el vector anterior a Verlet en x, para despues calcular si se ha dado una vuelta. 
-        //En el primer corchete se elige el planeta del que se quiere saber el periodo.
-
-        fprintf(fichero_sal, "\n");//Esto me deja espacios entre cada nueva iteracion de t.
->>>>>>> b97bc14a2565d83c564ff321b968889cc5db77ea
         fprintf(fichero_geo, "\n");
 
         Verlet(ap, mp, rp, vp, n, d, h);
         Energia(Tp, Up, rp, mp, vp, n, d);
         Geocentrico(rp, r_geo_p, n, d);
-<<<<<<< HEAD
         if(z%30==0){//Solo me printea los puntos multiplos de 5, para optimizar
             for(b=0;b<n;b++){
                 fprintf(fichero_sal, "%f, %f \n", r[b][0], r[b][1]);
@@ -96,17 +76,6 @@ int main()
         //}
         }
         for(s=0;s<n;s++){
-=======
-        
-            for(b=0;b<n;b++){
-                fprintf(fichero_sal, "%f, %f \n", r[b][0], r[b][1]);
-            }
-        //if(z%5==0){//Solo me printea los puntos multiplos de 5, para optimizar
-            for(b=0;b<n;b++){
-                fprintf(fichero_geo, "%f, %f \n", r_geo[b][0], r_geo[b][1]);
-        //}
-        }
->>>>>>> b97bc14a2565d83c564ff321b968889cc5db77ea
         if(r[s][1]*x[s][1]<0 && r[s][1]>=0){//Condicional que me mira si se dio una vuelta.
         //Multiplica la posicion y anterior con la actual, Si <0, es que se dio una vuelta entera.
         //Se apunta en tper el tiempo donde se ha realizado el periodo (vuelta) completo.
