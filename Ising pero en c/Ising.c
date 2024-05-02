@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include "FuncionesIsing.h"
 
 int main (){
 clock_t begin= clock();
@@ -9,7 +10,7 @@ srand(time(NULL));
 int N,n,m,i,j, k, Tmax, t, a, b, c, d;
 FILE* fichero_out;
 fichero_out=fopen("datos.txt", "w");
-N=120;
+N=64;
 int s[N][N];
 double E, T,p;
 p=rand()%2;
@@ -25,19 +26,23 @@ for(i=0;i<N;i++){
         }
     }
 }
-//Empiezo a hacer cosas
+int* sp=s[0];
+//Metropolis
 for(t=0;t<Tmax;t++){
     for(k=0;k<N*N;k++){
         n=rand()%(N);
         m=rand()%(N);
 
+        //Condiciones de contorno
         a = (n + 1) % N;
         b = (n - 1 + N) % N;
         c = (m + 1) % N;
         d = (m - 1 + N) % N;
 
-        E=2*s[n][m]*(s[a][m]+s[b][m]+s[n][c]+s[n][d]);
+        //Cálculo de DeltaE
+        E=DeltaEnergia(n, m, a, b, c, d, sp, N);
 
+        //Búsqueda del mínimo
         if(exp(-E/T)>1){
             p=1.;
         }
