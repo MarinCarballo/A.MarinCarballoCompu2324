@@ -1,42 +1,3 @@
-# ================================================================================
-# ANIMACION KAWASAKI
-#
-# Genera una animación a partir de un fichero de datos con la configuración
-# del retículo en cada instante de tiempo
-# 
-# El fichero debe estructurarse de la siguiente forma:
-# 
-#   s(1,1)_1, s(1,2)_1, ..., s(1,M)_1
-#   s(2,1)_1, s(2,2)_1, ..., s(2,M)_1
-#   (...)
-#   s(N,1)_1, s(N,2)_1, ..., s(N,M)_1
-#   
-#   s(1,1)_2, s(1,2)_2, ..., s(1,M)_2
-#   s(2,1)_2, s(2,2)_2, ..., s(2,M)_2
-#   (...)
-#   s(N,1)_2, s(N,2)_2, ..., s(N,M)_2
-#
-#   s(1,1)_3, s(1,2)_3, ..., s(1,M)_3
-#   s(2,1)_3, s(2,2)_3, ..., s(2,M)_3
-#   (...)
-#   s(N,1)_3, s(N,2)_3, ..., s(N,M)_3
-#   
-#   (...)
-#
-# donde s(i,j)_k es el valor del spin en la fila i-ésima y la columna
-# j-ésima en el instante k. M es el número de columnas y N el número
-# de filas en el retículo. Los valores del spin deben ser +1 ó -1.
-# El programa asume que las dimensiones del retículo no cambian a lo
-# largo del tiempo.
-# 
-# Si solo se especifica un instante de tiempo, se genera una imagen en pdf
-# en lugar de una animación
-#
-# Se puede configurar la animación cambiando el valor de las variables
-# de la sección "Parámetros"
-#
-# ================================================================================
-
 # Importa los módulos necesarios
 from matplotlib import pyplot as plt
 from matplotlib.animation import FuncAnimation
@@ -84,7 +45,7 @@ fig, ax = plt.subplots()
 ax.axis("off")  # No muestra los ejes
 
 # Representa el primer fotograma
-im = ax.imshow(frames_data[0], cmap="binary", vmin=-1, vmax=+1)
+im = ax.imshow(frames_data[0], cmap="RdBu_r", vmin=-1, vmax=+1)
  
 # Función que actualiza la configuración del sistema en la animación
 def update(j_frame, frames_data, im):
