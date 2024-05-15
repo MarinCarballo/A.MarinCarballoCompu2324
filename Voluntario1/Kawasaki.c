@@ -14,9 +14,9 @@ N=32;//Numero de spins.
 int s[N][N], r;
 double EC1, EC2, E, T,p;
 E=0;
-T=5;//Temperatura
+T=2.269;//Temperatura
 Tmax=1000;//Pasos Montecarlo
-//Lleno la matriz de 1 y -1. Menos la primera y la última fila
+//Lleno la matriz de 1 y -1 aleatoreamente. Menos la primera y la última fila
 for(i=1;i<N-1;i++){
     for(j=0;j<N;j++){
         s[i][j]=rand()%2;
@@ -48,12 +48,23 @@ for(t=0;t<Tmax;t++){
         w=rand()%(N-2)+1;//Entre N-2 para que no acceda a la última ni penúltima fila.
         z=rand()%(N);
         //Rotación aleatoria.
+        if(w==1){
+            r=rand()%3+1;
+        }
+        else if(w==N-2){
+            r=rand()%3;
+                if(r==1){
+                    r=3;
+                }
+        }
+        else{
         r=rand()%4;
-            for(n=1;n<N-2;n++){//Calculo la energía de toda la malla (menos las fijas, fila 1 y N-1)
+        }
+            for(n=1;n<N-1;n++){//Calculo la energía de toda la malla (menos las fijas, fila 1 y N-1)
                 for(m=0;m<N;m++){
                 //Condiciones de contorno
-                    a = (n + 1) % N;
-                    b = (n - 1 + N) % N;
+                    a = (n + 1);
+                    b = (n - 1);
                     c = (m + 1) % N;
                     d = (m - 1 + N) % N;
 
@@ -61,13 +72,17 @@ for(t=0;t<Tmax;t++){
 
                 }
             }
+            a = (w + 1);
+            b = (w - 1);
+            c = (z + 1) % N;
+            d = (z - 1 + N) % N;
         IntercambiarPosiciones(sp,r,N,w,z,a,b,c,d);//Intercambio posiciones con un spin vecino (elegido por r aleatorio)
 
-            for(n=1;n<N-2;n++){//Vuelvo a calcular las energias para mi nueva malla intercambiada
+            for(n=1;n<N-1;n++){//Vuelvo a calcular las energias para mi nueva malla intercambiada
                 for(m=0;m<N;m++){
                 //Condiciones de contorno
-                    a = (n + 1) % N;
-                    b = (n - 1 + N) % N;
+                    a = (n + 1);
+                    b = (n - 1);
                     c = (m + 1) % N;
                     d = (m - 1 + N) % N;
 
@@ -91,6 +106,10 @@ for(t=0;t<Tmax;t++){
         //Si mi cambio NO es favorable, vuelvo a dejar las cosas como estaban, en caso contrario,
         //el cambio estaba bien hecho.
         if(p<x){
+            a = (w + 1);
+            b = (w - 1);
+            c = (z + 1) % N;
+            d = (z - 1 + N) % N;
             IntercambiarPosiciones(sp, r, N, w, z, a, b, c, d);
         }
     }

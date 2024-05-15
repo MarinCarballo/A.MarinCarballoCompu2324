@@ -15,7 +15,7 @@ int s[N][N];
 double E, T,p;
 p=rand()%2;
 E=0;
-T=1;
+T=2.269;
 Tmax=1000;
 //Lleno la matriz de 1 y -1.
 for(i=0;i<N;i++){
