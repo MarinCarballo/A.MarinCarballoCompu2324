@@ -18,7 +18,7 @@ int main(){
     t=0;
     //Condiciones iniciales
     y[0]=RT; //r 
-    y[1]=3.14/4; //Phi
+    y[1]=3.14/4.1; //Phi
     y[2]=11100; //Pr
     y[3]=15000; //Pphi
     h=200;

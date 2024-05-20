@@ -10,13 +10,13 @@ srand(time(NULL));
 int N,n,m,i,j, k, Tmax, t, a, b, c, d;
 FILE* fichero_out;
 fichero_out=fopen("datos.txt", "w");
-N=64;
+N=32;
 int s[N][N];
 double E, T,p;
 p=rand()%2;
 E=0;
-T=2.269;
-Tmax=1000;
+T=1;
+Tmax=100;
 //Lleno la matriz de 1 y -1.
 for(i=0;i<N;i++){
     for(j=0;j<N;j++){

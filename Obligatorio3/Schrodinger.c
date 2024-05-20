@@ -12,8 +12,8 @@ int main (){
     ficheronorma=fopen("Norma.txt", "w");
     int N,T, n, j, nc;//T dimension de tiempos
     double lambda;
-    N=100;
-    T=200;
+    N=110;
+    T=250;
     double k, s, h;
     double V[N];
     double complex Phi[T][N];
@@ -29,7 +29,7 @@ int main (){
     h=1/Nalt;
     k=(2*PI*nc)/N;
     s=1/(4*k*k);
-    lambda=0.3;
+    lambda=0.7;
     //Se define la función de onda
     for(j=0; j<N; j++){
             Phi[0][j]=cexp(1*I*k*j)*exp(-8*pow((4*j-N),2)/(N*N));

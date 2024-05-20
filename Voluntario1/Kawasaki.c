@@ -10,18 +10,34 @@ srand(time(NULL));//Semilla aleatoria
 int N,n,m,i,j, k, Tmax, t, a, b, c, d, w, z;//Variables de iteracion
 FILE* fichero_out;
 fichero_out=fopen("Kawasaki.txt", "w");
+double sumSuperior, sumInferior;
+double magSuperior, magInferior;
+magInferior=0;
+magSuperior=0;
 N=32;//Numero de spins.
 int s[N][N], r;
 double EC1, EC2, E, T,p;
 E=0;
-T=2.269;//Temperatura
+T=1;//Temperatura
 Tmax=1000;//Pasos Montecarlo
 //Lleno la matriz de 1 y -1 aleatoreamente. Menos la primera y la última fila
-for(i=1;i<N-1;i++){
-    for(j=0;j<N;j++){
-        s[i][j]=rand()%2;
-    if(s[i][j]==0){
-        s[i][j]=-1;
+// for(i=1;i<N-1;i++){
+//     for(j=0;j<N;j++){
+//         s[i][j]=rand()%2;
+//     if(s[i][j]==0){
+//         s[i][j]=-1;
+//         }
+//     }
+// }
+// Initiaizo la matriz para tener una magnetización nula.
+for(i=0; i<N; i++){
+    for(j=0; j<N; j++){
+        // Asigno spin +1 a filas pares y spin -1 a filas impares
+        // Habrá el mismo número de up que down.
+        if(i % 2 == 0){
+            s[i][j] = 1; // Up spin
+        } else {
+            s[i][j] = -1; // Down spin
         }
     }
 }
@@ -39,8 +55,10 @@ for(j=0;j<N;j++){//Lleno la última fila de -1 y la primera de 1.
     fprintf(fichero_out, "\n");
 //Empiezo a hacer cosas
 int* sp=s[0];
-
+for (T=1;T<6;T++){
 for(t=0;t<Tmax;t++){
+    sumSuperior = 0;
+    sumInferior = 0;
     for(k=0;k<N*N;k++){
         EC1=0;
         EC2=0;
@@ -121,8 +139,24 @@ for(t=0;t<Tmax;t++){
             fprintf(fichero_out, "\n");
         }
     fprintf(fichero_out, "\n");
+    //MAGNETIZACIÓN 
+        for(i=0; i<N; i++){
+            for(j=0; j<N; j++){
+        if(i < N/2){
+            sumSuperior += s[i][j];
+        } else {
+            sumInferior += s[i][j];
+        }
+        }
+        }
+        magSuperior+=sumSuperior/(N/2*N/2);
+        magInferior+=sumInferior/(N/2*N/2);
 }
-
+magSuperior=magSuperior/Tmax;
+magInferior=magInferior/Tmax;
+printf("Magnetizacion=%lf, %lf \n", magSuperior, T);
+printf("Magnetizacion=%lf, %lf \n", magInferior, T);
+}
 fclose(fichero_out);
 clock_t end=clock();//Tiempo que ha tardado en ejecutarse
 double tiempo= (double) (end-begin)/ CLOCKS_PER_SEC;

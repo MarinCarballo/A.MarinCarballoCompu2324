@@ -48,18 +48,18 @@ import numpy as np
 # Parámetros
 # ========================================
 file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Obligatorio4/cohete.txt" # Nombre del fichero de datos
-file_out = "planetas" # Nombre del fichero de salida (sin extensión)
+file_out = "Cohete(picuartos)" # Nombre del fichero de salida (sin extensión)
 
 # Límites de los ejes X e Y
-x_min = -1
-x_max = 1
-y_min = -1
-y_max = 1
+x_min = -2
+x_max = 2
+y_min = -2
+y_max = 2
 
-interval = 1# Tiempo entre fotogramas en milisegundos
+interval = 0.1# Tiempo entre fotogramas en milisegundos
 show_trail = True # Muestra la "estela" del planeta
 trail_width = 1 # Ancho de la estela
-save_to_file = False # False: muestra la animación por pantalla,
+save_to_file = True # False: muestra la animación por pantalla,
                      # True: la guarda en un fichero
 dpi = 150 # Calidad del vídeo de salida (dots per inch)
 
