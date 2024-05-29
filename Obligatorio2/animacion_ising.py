@@ -46,7 +46,7 @@ import io
 # Parámetros
 # ========================================
 file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Ising pero en c/datos.txt" # Nombre del fichero de datos
-file_out = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Hola" # Nombre del fichero de salida (sin extensión)
+file_out = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/T=1, N=120" # Nombre del fichero de salida (sin extensión)
 interval = 1 # Tiempo entre fotogramas en milisegundos
 save_to_file = True # False: muestra la animación por pantalla,
                      # True: la guarda en un fichero

@@ -3,23 +3,31 @@
 #include <stdlib.h>
 #include <time.h>
 #include "FuncionesKawasaki.h"
+#include <omp.h>
 
-int main (){
+int main (){                         
 clock_t begin= clock();//Tiempo de compilacion
 srand(time(NULL));//Semilla aleatoria
 int N,n,m,i,j, k, Tmax, t, a, b, c, d, w, z;//Variables de iteracion
+Tmax=10000;//Pasos Montecarlo
+double media, varianza;
 FILE* fichero_out;
+FILE* ficheroMag;
+FILE* ficheroDensidad;
 fichero_out=fopen("Kawasaki.txt", "w");
+ficheroMag=fopen("Magnetizacion.txt","w");
+ficheroDensidad=fopen("Densidad.txt","w");
 double sumSuperior, sumInferior;
-double magSuperior, magInferior;
-magInferior=0;
-magSuperior=0;
-N=32;//Numero de spins.
+double magSuperior[Tmax], magInferior[Tmax];
+for(i=0;i<Tmax;i++){
+    magInferior[i]=0;
+    magSuperior[i]=0;
+}
+N=10;//Numero de spins.
 int s[N][N], r;
 double EC1, EC2, E, T,p;
 E=0;
 T=1;//Temperatura
-Tmax=1000;//Pasos Montecarlo
 //Lleno la matriz de 1 y -1 aleatoreamente. Menos la primera y la última fila
 // for(i=1;i<N-1;i++){
 //     for(j=0;j<N;j++){
@@ -29,18 +37,7 @@ Tmax=1000;//Pasos Montecarlo
 //         }
 //     }
 // }
-// Initiaizo la matriz para tener una magnetización nula.
-for(i=0; i<N; i++){
-    for(j=0; j<N; j++){
-        // Asigno spin +1 a filas pares y spin -1 a filas impares
-        // Habrá el mismo número de up que down.
-        if(i % 2 == 0){
-            s[i][j] = 1; // Up spin
-        } else {
-            s[i][j] = -1; // Down spin
-        }
-    }
-}
+
 for(j=0;j<N;j++){//Lleno la última fila de -1 y la primera de 1.
         s[0][j]=1;
         s[N-1][j]=-1;
@@ -55,8 +52,26 @@ for(j=0;j<N;j++){//Lleno la última fila de -1 y la primera de 1.
     fprintf(fichero_out, "\n");
 //Empiezo a hacer cosas
 int* sp=s[0];
-for (T=1;T<6;T++){
+for (T=1;T<6;T=T+0.2){
+    // Inicializo la matriz para tener una magnetización nula.
+    for(i=0; i<N; i++){
+        for(j=0; j<N; j++){
+        // Asigno spin +1 a filas pares y spin -1 a filas impares
+        // Habrá el mismo número de up que down.
+            if(i % 2 == 0){
+                s[i][j] = 1; // Up spin
+            } else {
+                s[i][j] = -1; // Down spin
+            }
+        }   
+    }
+    double conta;
+    conta=0;
 for(t=0;t<Tmax;t++){
+    for(i=0;i<Tmax;i++){
+        magInferior[i]=0;
+        magSuperior[i]=0;
+    }
     sumSuperior = 0;
     sumInferior = 0;
     for(k=0;k<N*N;k++){
@@ -131,6 +146,7 @@ for(t=0;t<Tmax;t++){
             IntercambiarPosiciones(sp, r, N, w, z, a, b, c, d);
         }
     }
+    if(t%100==0){
       for(i=0;i<N;i++){
             for(j=0;j<N-1;j++){
                 fprintf(fichero_out, "%d, ", s[i][j]);
@@ -139,25 +155,72 @@ for(t=0;t<Tmax;t++){
             fprintf(fichero_out, "\n");
         }
     fprintf(fichero_out, "\n");
+    }
+
     //MAGNETIZACIÓN 
-        for(i=0; i<N; i++){
+        for(i=1; i<N-1; i++){
             for(j=0; j<N; j++){
-        if(i < N/2){
-            sumSuperior += s[i][j];
-        } else {
-            sumInferior += s[i][j];
+                if(i < N/2){
+                    sumSuperior += s[i][j];
+                } else {
+                    sumInferior += s[i][j];
+                }
+            }
         }
+        magSuperior[t]=sumSuperior/(((N-1)/2)*N);
+        magInferior[t]=sumInferior/(((N-1)/2)*N);
+//DENSIDAD PROMEDIO EN Y
+double contplus, contminus,PromedioDensidadPlus, PromedioDensidadMinus;
+double densidadplus[N], densidadminus[N];
+PromedioDensidadPlus=0;
+PromedioDensidadMinus=0;
+contplus=0;
+contminus=0;
+    for(j=0;j<N;j++){
+            contplus=0;
+            contminus=0;
+            for(i=0;i<N;i++){
+                if(s[i][j]==1){
+                    contplus+=1;
+                }
+                else{
+                    contminus+=1;
+                }
+            }//DENSIDAD POR COLUMNA:
+            densidadplus[j]=contplus/N;
+            densidadminus[j]=contminus/N;
         }
-        }
-        magSuperior+=sumSuperior/(N/2*N/2);
-        magInferior+=sumInferior/(N/2*N/2);
+    // for(j=0;j<N;j++){//Promedio de columnas
+    //     PromedioDensidadPlus+=densidadplus[j]/N;
+    //     PromedioDensidadMinus+=densidadminus[j]/N;
+    // }
+    conta=conta+densidadplus[0];
+// printf("Densidad Plus=%lf, %lf \n", PromedioDensidadPlus, T);
+// printf("Densidad Minus=%lf, %lf \n", PromedioDensidadMinus, T);    
+}//fin montecarlo
+double MediaSuperior, MediaInferior, varianzaSup, varianzaInf;
+MediaSuperior=0;
+MediaInferior=0;
+varianzaSup=0;
+varianzaInf=0;
+for(t=0; t<Tmax; t++){//MEDIA
+    MediaSuperior+=magSuperior[t]/Tmax;
+    MediaInferior+=magInferior[t]/Tmax;
 }
-magSuperior=magSuperior/Tmax;
-magInferior=magInferior/Tmax;
-printf("Magnetizacion=%lf, %lf \n", magSuperior, T);
-printf("Magnetizacion=%lf, %lf \n", magInferior, T);
+for(t=0; t<Tmax; t++){//VARIANZA
+    varianzaSup+=pow((magSuperior[t]-MediaSuperior),2)/Tmax;
+    varianzaInf+=pow((magInferior[t]-MediaInferior),2)/Tmax;
+}
+double errorSup, errorInf;
+errorSup=sqrt(varianzaSup)/sqrt(Tmax);
+errorInf=sqrt(varianzaInf)/sqrt(Tmax);
+conta=conta/Tmax;
+fprintf(ficheroMag, "%lf, %lf, %lf, %lf, %lf \n", MediaSuperior, errorSup,  MediaInferior, errorInf, T);
+fprintf(ficheroDensidad, "%lf, %lf, %lf \n", conta, 1-conta, T);
 }
 fclose(fichero_out);
+fclose(ficheroMag);
+fclose(ficheroDensidad);
 clock_t end=clock();//Tiempo que ha tardado en ejecutarse
 double tiempo= (double) (end-begin)/ CLOCKS_PER_SEC;
     printf("Tiempo de compilacion=%lf \n", tiempo);
