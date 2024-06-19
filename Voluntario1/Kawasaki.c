@@ -23,7 +23,7 @@ for(i=0;i<Tmax;i++){
     magInferior[i]=0;
     magSuperior[i]=0;
 }
-N=10;//Numero de spins.
+N=32;//Numero de spins.
 int s[N][N], r;
 double EC1, EC2, E, T,p;
 E=0;
@@ -38,21 +38,9 @@ T=1;//Temperatura
 //     }
 // }
 
-for(j=0;j<N;j++){//Lleno la última fila de -1 y la primera de 1.
-        s[0][j]=1;
-        s[N-1][j]=-1;
-}
-      for(i=0;i<N;i++){
-            for(j=0;j<N-1;j++){
-                fprintf(fichero_out, "%d, ", s[i][j]);
-            }
-            fprintf(fichero_out, "%d", s[i][N-1]);
-            fprintf(fichero_out, "\n");
-        }
-    fprintf(fichero_out, "\n");
 //Empiezo a hacer cosas
 int* sp=s[0];
-for (T=1;T<6;T=T+0.2){
+for (T=1;T<2;T++){
     // Inicializo la matriz para tener una magnetización nula.
     for(i=0; i<N; i++){
         for(j=0; j<N; j++){
@@ -67,6 +55,20 @@ for (T=1;T<6;T=T+0.2){
     }
     double conta;
     conta=0;
+for(j=0;j<N;j++){//Lleno la última fila de -1 y la primera de 1.
+        s[0][j]=1;
+        s[N-1][j]=-1;
+}
+for(int k=0;k<100;k++){
+      for(i=0;i<N;i++){
+            for(j=0;j<N-1;j++){
+                fprintf(fichero_out, "%d, ", s[i][j]);
+            }
+            fprintf(fichero_out, "%d", s[i][N-1]);
+            fprintf(fichero_out, "\n");
+        }
+    fprintf(fichero_out, "\n");
+}
 for(t=0;t<Tmax;t++){
     for(i=0;i<Tmax;i++){
         magInferior[i]=0;
@@ -146,16 +148,16 @@ for(t=0;t<Tmax;t++){
             IntercambiarPosiciones(sp, r, N, w, z, a, b, c, d);
         }
     }
-    if(t%100==0){
-      for(i=0;i<N;i++){
-            for(j=0;j<N-1;j++){
-                fprintf(fichero_out, "%d, ", s[i][j]);
-            }
-            fprintf(fichero_out, "%d", s[i][N-1]);
-            fprintf(fichero_out, "\n");
-        }
-    fprintf(fichero_out, "\n");
-    }
+    // if(t%100==0){
+    //   for(i=0;i<N;i++){
+    //         for(j=0;j<N-1;j++){
+    //             fprintf(fichero_out, "%d, ", s[i][j]);
+    //         }
+    //         fprintf(fichero_out, "%d", s[i][N-1]);
+    //         fprintf(fichero_out, "\n");
+    //     }
+    // fprintf(fichero_out, "\n");
+    // }
 
     //MAGNETIZACIÓN 
         for(i=1; i<N-1; i++){

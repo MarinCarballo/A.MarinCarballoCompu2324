@@ -4,8 +4,8 @@
 #include <time.h>
 #include <omp.h>
 
-#define N 64 // Numero de spins.
-#define Tmax 10000 // Pasos Montecarlo
+#define N 32 // Numero de spins.
+#define Tmax 1000000 // Pasos Montecarlo
 
 void initialize_spins(int s[N][N]) {
     for(int i = 1; i < N-1; i++) {
@@ -72,16 +72,18 @@ int main () {
     FILE* ficheroMag = fopen("Magnetizacion.txt", "w");
     FILE* ficheroDensidad = fopen("Densidad.txt", "w");
 
-    double magSuperior[Tmax] = {0};
-    double magInferior[Tmax] = {0};
-
+    //double magSuperior[Tmax] = {0};
+    //double magInferior[Tmax] = {0};
+    double T;
     int s[N][N];
     initialize_spins(s);
     fill_boundaries(s);
-
-    for (double T = 1; T < 6; T=T+0.5) {
+    T=1;
+  //  for (double T = 1; T < 2; T++) {
         initialize_spins(s);
         fill_boundaries(s);
+        double conta;
+        conta=0;
         for (int t = 0; t < Tmax; t++) {
             double sumSuperior = 0;
             double sumInferior = 0;
@@ -119,7 +121,7 @@ int main () {
                     }
                 }
             }
-            if(t==1000){
+            if(t==999999){
                 for (int i = 0; i < N; i++) {
                     for (int j = 0; j < N-1; j++) {
                         fprintf(fichero_out, "%d, ", s[i][j]);
@@ -127,7 +129,7 @@ int main () {
                     fprintf(fichero_out, "%d \n",  s[i][N-1]);
                 }
                 fprintf(fichero_out, "\n");
-                }
+            }
         if(t>1000){//Dejo al sistema evolucionar 1000 pasos montecarlo para obtener resultados mas fiables.
             for (int i = 1; i < N-1; i++) {
                 for (int j = 0; j < N; j++) {
@@ -139,32 +141,59 @@ int main () {
                 }
             }
 
-            magSuperior[t] = sumSuperior / (((N-1)/2) * N);
-            magInferior[t] = sumInferior / (((N-1)/2) * N);
+            //magSuperior[t] = sumSuperior / (((N-1)/2) * N);
+            //magInferior[t] = sumInferior / (((N-1)/2) * N);
             }
+        double contplus, contminus,PromedioDensidadPlus, PromedioDensidadMinus;
+        double densidadplus[N], densidadminus[N];
+        PromedioDensidadPlus=0;
+        PromedioDensidadMinus=0;
+        contplus=0;
+        contminus=0;
+    for(int j=0;j<N;j++){
+            contplus=0;
+            contminus=0;
+            for(int i=0;i<N;i++){
+                if(s[i][j]==1){
+                    contplus+=1;
+                }
+                else{
+                    contminus+=1;
+                }
+            }//DENSIDAD POR COLUMNA:
+            densidadplus[j]=contplus/N;
+            densidadminus[j]=contminus/N;
+        }
+            // for(j=0;j<N;j++){//Promedio de columnas
+            //     PromedioDensidadPlus+=densidadplus[j]/N;
+            //     PromedioDensidadMinus+=densidadminus[j]/N;
+        // }
+        conta=conta+densidadplus[0];
         }//FinMontecarlo
 
         double MediaSuperior = 0;
         double MediaInferior = 0;
         double varianzaSup = 0;
         double varianzaInf = 0;
-
-        for (int t = 1000; t < Tmax; t++) {
-            MediaSuperior += magSuperior[t] /(Tmax-1000);
-            MediaInferior += magInferior[t] /(Tmax-1000);
+        double a=100;
+        for (int t = a; t < Tmax; t++) {
+            //MediaSuperior += magSuperior[t] /(Tmax-a);
+            //MediaInferior += magInferior[t] /(Tmax-a);
         }
 
-        for (int t = 1000; t < Tmax; t++) {
-            varianzaSup += pow(magSuperior[t] - MediaSuperior, 2) / (Tmax-1000);
-            varianzaInf += pow(magInferior[t] - MediaInferior, 2) / (Tmax-1000);
+        for (int t = a; t < Tmax; t++) {
+            //varianzaSup += pow(magSuperior[t] - MediaSuperior, 2) / (Tmax-a);
+            //varianzaInf += pow(magInferior[t] - MediaInferior, 2) / (Tmax-a);
         }
 
-        double errorSup = sqrt(varianzaSup) / sqrt(Tmax-1000);
-        double errorInf = sqrt(varianzaInf) / sqrt(Tmax-1000);
+        double errorSup = sqrt(varianzaSup) / sqrt(Tmax-a);
+        double errorInf = sqrt(varianzaInf) / sqrt(Tmax-a);
+        conta=conta/Tmax;//Densidad promediada
 
         fprintf(ficheroMag, "%lf, %lf, %lf, %lf, %lf\n", MediaSuperior, 3*errorSup, MediaInferior, 3*errorInf, T);
+        fprintf(ficheroDensidad, "%lf, %lf, %lf \n", conta, 1-conta, T); //DensidadPlus, DensidadMinus, T
         printf("Temperatura terminada");
-    }
+   // }
 
     fclose(fichero_out);
     fclose(ficheroMag);
