@@ -4,13 +4,26 @@
 #include <time.h>
 #include <omp.h>
 
-#define N 32 // Numero de spins.
-#define Tmax 1000000 // Pasos Montecarlo
+#define N 64// Numero de spins.
+#define Tmax 100000 // Pasos Montecarlo
+//double Temp[Tmax];
+//double Temp2[Tmax];
 
-void initialize_spins(int s[N][N]) {
+void initialize_spins(int s[N][N]) {//Magnetización nula
     for(int i = 1; i < N-1; i++) {
         for(int j = 0; j < N; j++) {
             s[i][j] = (i % 2 == 0) ? 1 : -1; // Spins alternantes.
+        }
+    }
+}
+
+void random_magnetization(int s[N][N]){
+     for(int i = 1; i < N-1; i++) {
+        for(int j = 0; j < N; j++) {
+            s[i][j]=rand()%2;
+        if(s[i][j]==0){
+            s[i][j]=-1;
+            }
         }
     }
 }
@@ -71,19 +84,27 @@ int main () {
     FILE* fichero_out = fopen("Kawasaki.txt", "w");
     FILE* ficheroMag = fopen("Magnetizacion.txt", "w");
     FILE* ficheroDensidad = fopen("Densidad.txt", "w");
+    FILE* ficheroEnergía = fopen("Energia.txt", "w");
 
+    double T=1;
     //double magSuperior[Tmax] = {0};
     //double magInferior[Tmax] = {0};
-    double T;
+    double densidadplus[N]= {0};
+    double densidadminus[N]= {0};
+    double sigma[N];
     int s[N][N];
-    initialize_spins(s);
-    fill_boundaries(s);
-    T=1;
-  //  for (double T = 1; T < 2; T++) {
-        initialize_spins(s);
+    //initialize_spins(s); //Para magnetización nula.
+    //random_magnetization(s); //Para magnetizacion aleatoria
+    //fill_boundaries(s);
+
+//for (double T = 1; T < 6; T=T+0.2) {
+        initialize_spins(s); //Mag. Nula
+        //random_magnetization(s); //Mag. Aleatoria
         fill_boundaries(s);
         double conta;
         conta=0;
+        double PromedioEnergia;
+        PromedioEnergia=0;
         for (int t = 0; t < Tmax; t++) {
             double sumSuperior = 0;
             double sumInferior = 0;
@@ -119,9 +140,11 @@ int main () {
                     if ((double)rand() / RAND_MAX > p) {
                         swap_spins(s, w, z, r); // Si el cambio NO es favorable, revierto el cambio.
                     }
+                    PromedioEnergia-=EC1;
                 }
             }
-            if(t==999999){
+            //Temp2[t]=PromedioEnergia;
+            if(t==99999){
                 for (int i = 0; i < N; i++) {
                     for (int j = 0; j < N-1; j++) {
                         fprintf(fichero_out, "%d, ", s[i][j]);
@@ -145,15 +168,14 @@ int main () {
             //magInferior[t] = sumInferior / (((N-1)/2) * N);
             }
         double contplus, contminus,PromedioDensidadPlus, PromedioDensidadMinus;
-        double densidadplus[N], densidadminus[N];
         PromedioDensidadPlus=0;
         PromedioDensidadMinus=0;
         contplus=0;
         contminus=0;
-    for(int j=0;j<N;j++){
+    for(int i=0;i<N;i++){
             contplus=0;
             contminus=0;
-            for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
                 if(s[i][j]==1){
                     contplus+=1;
                 }
@@ -161,43 +183,68 @@ int main () {
                     contminus+=1;
                 }
             }//DENSIDAD POR COLUMNA:
-            densidadplus[j]=contplus/N;
-            densidadminus[j]=contminus/N;
+            densidadplus[i]+=contplus/N;
+            densidadminus[i]=contminus/N;
         }
             // for(j=0;j<N;j++){//Promedio de columnas
             //     PromedioDensidadPlus+=densidadplus[j]/N;
             //     PromedioDensidadMinus+=densidadminus[j]/N;
         // }
-        conta=conta+densidadplus[0];
+        conta=conta+densidadplus[0];//Voy sumando el valor de la densidad de una columna en un contador.
+        //Temp[t]=densidadplus[0];
         }//FinMontecarlo
 
         double MediaSuperior = 0;
         double MediaInferior = 0;
         double varianzaSup = 0;
         double varianzaInf = 0;
+        double varianzaDensidad;
         double a=100;
-        for (int t = a; t < Tmax; t++) {
+        for (int t = a; t < Tmax; t++) {//Media magnetizacion
             //MediaSuperior += magSuperior[t] /(Tmax-a);
             //MediaInferior += magInferior[t] /(Tmax-a);
         }
 
-        for (int t = a; t < Tmax; t++) {
+        for (int t = a; t < Tmax; t++) {//Varianza magnetizacion
             //varianzaSup += pow(magSuperior[t] - MediaSuperior, 2) / (Tmax-a);
             //varianzaInf += pow(magInferior[t] - MediaInferior, 2) / (Tmax-a);
         }
 
         double errorSup = sqrt(varianzaSup) / sqrt(Tmax-a);
         double errorInf = sqrt(varianzaInf) / sqrt(Tmax-a);
+    
         conta=conta/Tmax;//Densidad promediada
+        double VarianzaDensidad;
+        VarianzaDensidad=0;
+        for (int t=0; t<Tmax; t++){//Varianza densidad
+            //VarianzaDensidad+=pow(Temp[t] - conta, 2) / (Tmax);
+        }
+        double errorDensidad = sqrt(VarianzaDensidad) / sqrt(Tmax);
 
+        //Energia Promedio Por Partícula 
+        PromedioEnergia=PromedioEnergia/Tmax;//Promedio entre todos los pasos MonteCarlo
+        PromedioEnergia=PromedioEnergia/(2*N);//Promedio por partícula
+
+        double VarianzaEnergia;
+        VarianzaEnergia=0;
+        for (int t=0; t<Tmax; t++){//Varianza Energía
+            //VarianzaEnergia+=pow(Temp2[t]/(Tmax*2*N) - PromedioEnergia, 2) / (Tmax);
+        }
+        double ErrorEnergia = sqrt(VarianzaEnergia) / sqrt(Tmax);
+        for(int i=0;i<N; i++){
+            sigma[i]=densidadplus[i]/Tmax;
+            fprintf(ficheroDensidad, "%lf, %lf, %d \n", sigma[i], 0.003, i);
+        }
         fprintf(ficheroMag, "%lf, %lf, %lf, %lf, %lf\n", MediaSuperior, 3*errorSup, MediaInferior, 3*errorInf, T);
-        fprintf(ficheroDensidad, "%lf, %lf, %lf \n", conta, 1-conta, T); //DensidadPlus, DensidadMinus, T
+        //fprintf(ficheroDensidad, "%lf, %lf, %lf, %lf, %lf \n", conta, 3*errorDensidad, 1-conta, 3*errorDensidad, T); //DensidadPlus, DensidadMinus, 
+        fprintf(ficheroEnergía, "%lf, %lf, %lf \n", PromedioEnergia, 3*ErrorEnergia, T);
         printf("Temperatura terminada");
-   // }
+    //}//Fin temperatura
 
     fclose(fichero_out);
     fclose(ficheroMag);
     fclose(ficheroDensidad);
+    fclose(ficheroEnergía);
 
     clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
     double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;

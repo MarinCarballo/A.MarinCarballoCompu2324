@@ -2,28 +2,41 @@
 #include <math.h>
 #include <stdlib.h>
 
-double fMomentoR(double MomentoPhi, double r, double mu, double Phi, double w, double t, double Delta){
-    double pr, rprima;
-    rprima=(sqrt(1+r*r-2*r*cos(Phi-w*t)));
-    pr=(MomentoPhi*MomentoPhi)/(pow(r, 3))-Delta*(1/(r*r)+(r-cos(Phi-w*t))*mu/(pow(rprima, 3)));
-    return pr;
+double fMomentoPsi(double Phi, double MomentoPhi, double Psi, double MomentoPsi){
+    double g=9.81;
+    double ppsi;
+
+    ppsi=((MomentoPsi*MomentoPhi*pow(cos(Psi-Phi),2)-(2*pow(MomentoPsi,2)+pow(MomentoPhi,2)*cos(Psi-Phi))+2*MomentoPhi*MomentoPsi)/(pow((2-pow(cos(Psi-Phi),2)),2)))*2*sin(Psi-Phi);
+    ppsi=ppsi-g*sin(Psi);
+
+    return ppsi;
 }
 
-double fr(double MomentoR){
-    double frr;
-    frr=MomentoR;
-    return frr;
+double fPsi(double Phi, double MomentoPhi, double Psi, double MomentoPsi){
+    double pesi;
+    double g=9.81;
+
+    pesi=(2*MomentoPsi-MomentoPhi*cos((Psi-Phi)));
+    pesi=pesi/(2-pow(cos((Phi-Psi)),2));
+
+    return pesi;
 }
 
-double fPhi(double MomentoPhi, double r){
+double fPhi(double Phi, double MomentoPhi, double Psi, double MomentoPsi){
     double fPhiaux;
-    fPhiaux=(MomentoPhi)/(r*r);
+
+    fPhiaux=(MomentoPhi-MomentoPsi*cos((Psi-Phi)));
+    fPhiaux=fPhiaux/(2-pow(cos((Phi-Psi)),2));
+
     return fPhiaux;
 }
 
-double fMomentoPhi(double r, double mu, double Delta, double Phi, double w, double t){
-    double Fmont, rprima;
-    rprima=(sqrt(1+r*r-2*r*cos(Phi-w*t)));
-    Fmont=-(Delta*mu*r)/(pow(rprima,3))*sin(Phi-w*t);
-    return Fmont;
+double fMomentoPhi(double Phi, double MomentoPhi, double Psi, double MomentoPsi){
+    double pphi;
+    double g=9.81;
+
+    pphi=((MomentoPsi*MomentoPhi*pow(cos(Psi-Phi),2)-(2*pow(MomentoPsi,2)+pow(MomentoPhi,2)*cos(Psi-Phi))+2*MomentoPhi*MomentoPsi)/(pow((2-pow(cos(Psi-Phi),2)),2)))*2*sin(Phi-Psi);
+    pphi=pphi-2*g*sin(Phi);
+
+    return pphi;
 }

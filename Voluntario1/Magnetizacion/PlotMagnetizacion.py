@@ -23,7 +23,7 @@ plt.plot(data['Temperatura'], data['MagTotal'], '-.', linewidth=1, label='Magnet
 # Añadir etiquetas y título
 plt.xlabel('Temperatura (K)')
 plt.ylabel('Magnetización (1/Am)')
-plt.title('Magnetización vs Temperatura: N=64, 10000 Pasos Montecarlo')
+plt.title('Magnetización vs Temperatura: N=64, 50000 Pasos Montecarlo')
 plt.legend()
 
 # Mostrar la gráfica

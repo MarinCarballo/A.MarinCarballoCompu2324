@@ -4,67 +4,152 @@
 #include <time.h>
 #include <omp.h>
 #include "FuncionesPenduloDoble.h"
-#define pi 3.14;
+#define pi 3.14
 
 int main(){
     FILE *fichero_out;
     fichero_out=fopen("PenduloDoble.txt", "w");
-    double g=9.8, MT=5.9736e24, ML=0.07349e24, dTL=3.844e8, w=2.6677e-6, RT=6.378160e6, RL=1.7374e6, Delta, mu, h, t, Tmax, m, xL, yL;
-    double y[4];
-    double k[4][4];
-    double cordx, cordy, E;
+    FILE* ficheroEnergía = fopen("Energia.txt", "w");
+    FILE* ficheroVelocidad = fopen("VelocidadAngulo.txt", "w");
+    FILE* ficheroVelocidad2 = fopen("VelocidadAngulo2.txt", "w");
+    FILE* ficheroLyapunov = fopen("Lyapunov.txt", "w");
+    FILE* ficheroOptimizacion = fopen("Optimizacion.txt", "w");
+    double g=9.81, h, t, Tmax, m;
+    double y[4], x[4];
+    double k[4][4], q[4][4];
+    double E;
     int i, j;
-    mu=ML/MT;
-    Tmax=1000000;
+    double x1, y1, x2, y2;
+    x1=0;
+    y1=0;
+    x2=0;
+    y2=0;
+
+    double Lyapunov;
+
+    Lyapunov=0;
+    double distancia, distanciainicial, cont;
+
+for(Tmax=1000; Tmax<1000000; Tmax=Tmax+1000){
+    clock_t begin = clock(); // Tiempo de compilacion
     t=0;
-    //Condiciones iniciales
+    distancia=0;
+    distanciainicial=0;
+    cont=0;
+    //Condiciones iniciales 1
     E=1;
-    y[0]=pi; //Psi
-    y[1]=pi; //Phi
-    y[2]=0; //Momento de Psi
-    y[3]=sqrt(E-2*g*(1-cos(y[1]))-g*(1-cos(y[0]))); //Momento de Phi
-    h=200;  
+    y[0]=0.3; //Psi
+    y[1]=0.1; //Phi
+    y[3]=sqrt(E-2*g*(1-cos(y[1]))-g*(1-cos(y[0]))); //Velocidad de Phi
+    y[2]=y[3]*cos(y[0]-y[1]); //Momento de Psi
+
+    y[3]=2*y[3];//Momento phi
+
+    double E2=15.5;
+    //Otras condiciones iniciales, para calcular el coeficiente de Lyapunov.
+    x[0]=0.3; //Psi
+    x[1]=0.1; //Phi
+    x[3]=sqrt(E2-2*g*(1-cos(x[1]))-g*(1-cos(x[0]))); //Velocidad de Phi
+    x[2]=x[3]*cos(x[0]-x[1]); //Momento de Psi
+
+    x[3]=2*x[3];//Momento phi
+
+    h=0.001;  
     while(t<Tmax){
         //Calculo de k1:
-        k[0][0]=h*fr(y[2]);
-        k[0][1]=h*fPhi(y[3], y[0]);
-        k[0][2]=h*fMomentoR(y[3], y[0], mu, y[1], w, t, Delta);
-        k[0][3]=h*fMomentoPhi(y[0], mu, Delta, y[1], w, t);
-        
+        k[0][0]=h*fPsi(y[1], y[3], y[0], y[2]);
+        k[0][1]=h*fPhi(y[1], y[3], y[0], y[2]);
+        k[0][2]=h*fMomentoPsi(y[1], y[3], y[0], y[2]);
+        k[0][3]=h*fMomentoPhi(y[1], y[3], y[0], y[2]);
+    
         //Calculo de k2:
-        k[1][0]=h*fr(y[2]+k[0][2]/2);
-        k[1][1]=h*fPhi(y[3]+k[0][3]/2, y[0]+k[0][0]/2);
-        k[1][2]=h*fMomentoR(y[3]+k[0][3]/2, y[0]+k[0][0]/2, mu, y[1]+k[0][1]/2, w, t+h/2, Delta);
-        k[1][3]=h*fMomentoPhi(y[0]+k[0][0]/2, mu, Delta, y[1]+k[0][1]/2, w, t+h/2);
+        k[1][0]=h*fPsi(y[1]+k[0][1]/2, y[3]+k[0][3]/2, y[0]+k[0][0]/2, y[2]+k[0][2]/2);
+        k[1][1]=h*fPhi(y[1]+k[0][1]/2, y[3]+k[0][3]/2, y[0]+k[0][0]/2, y[2]+k[0][2]/2);
+        k[1][2]=h*fMomentoPsi(y[1]+k[0][1]/2, y[3]+k[0][3]/2, y[0]+k[0][0]/2, y[2]+k[0][2]/2);
+        k[1][3]=h*fMomentoPhi(y[1]+k[0][1]/2, y[3]+k[0][3]/2, y[0]+k[0][0]/2, y[2]+k[0][2]/2);
         
         //Calculo de k3:
-        k[2][0]=h*fr(y[2]+k[1][2]/2);
-        k[2][1]=h*fPhi(y[3]+k[1][3]/2, y[0]+k[1][0]/2);
-        k[2][2]=h*fMomentoR(y[3]+k[1][3]/2, y[0]+k[1][0]/2, mu, y[1]+k[1][1]/2, w, t+h/2, Delta);
-        k[2][3]=h*fMomentoPhi(y[0]+k[1][0]/2, mu, Delta, y[1]+k[1][1]/2, w, t+h/2);   
+        k[2][0]=h*fPsi(y[1]+k[1][1]/2, y[3]+k[1][3]/2, y[0]+k[1][0]/2, y[2]+k[1][2]/2);
+        k[2][1]=h*fPhi(y[1]+k[1][1]/2, y[3]+k[1][3]/2, y[0]+k[1][0]/2, y[2]+k[1][2]/2);
+        k[2][2]=h*fMomentoPsi(y[1]+k[1][1]/2, y[3]+k[1][3]/2, y[0]+k[1][0]/2, y[2]+k[1][2]/2);
+        k[2][3]=h*fMomentoPhi(y[1]+k[1][1]/2, y[3]+k[1][3]/2, y[0]+k[1][0]/2, y[2]+k[1][2]/2);   
 
         //Calculo de k4
-        k[3][0]=h*fr(y[2]+k[2][2]);
-        k[3][1]=h*fPhi(y[3]+k[2][3], y[0]+k[2][0]);
-        k[3][2]=h*fMomentoR(y[3]+k[2][3], y[0]+k[2][0], mu, y[1]+k[2][1], w, t+h, Delta);
-        k[3][3]=h*fMomentoPhi(y[0]+k[2][0], mu, Delta, y[1]+k[2][1], w, t+h);    
+        k[3][0]=h*fPsi(y[1]+k[2][1], y[3]+k[2][3], y[0]+k[2][0], y[2]+k[2][2]);
+        k[3][1]=h*fPhi(y[1]+k[2][1], y[3]+k[2][3], y[0]+k[2][0], y[2]+k[2][2]);
+        k[3][2]=h*fMomentoPsi(y[1]+k[2][1], y[3]+k[2][3], y[0]+k[2][0], y[2]+k[2][2]);
+        k[3][3]=h*fMomentoPhi(y[1]+k[2][1], y[3]+k[2][3], y[0]+k[2][0], y[2]+k[2][2]);    
         
         //Calculo de la nueva y
         for(i=0;i<4;i++){
             y[i]=y[i]+(k[0][i]+2*k[1][i]+2*k[2][i]+k[3][i])/6;
         }
-        cordx=y[0]*cos(y[1]);
-        cordy=y[0]*sin(y[1]);
-        xL=cos(w*t);
-        yL=sin(w*t);
-        t=t+h;
-        fprintf(fichero_out, "%lf, %lf \n", 0, 0);
-        fprintf(fichero_out, "%lf, %lf \n", cordx, cordy);
-        fprintf(fichero_out, "%lf, %lf \n", xL, yL);
-        fprintf(fichero_out, "\n");
-        }
-    fclose(fichero_out);
+        
+        //x1=sin(y[1]);
+        //y1=-cos(y[1]);
+        //x2=x1+sin(y[0]);
+        //y2=y1-cos(y[0]);
 
+        //Calculo de q1:
+        // q[0][0]=h*fPsi(x[1], x[3], x[0], x[2]);
+        // q[0][1]=h*fPhi(x[1], x[3], x[0], x[2]);
+        // q[0][2]=h*fMomentoPsi(x[1], x[3], x[0], x[2]);
+        // q[0][3]=h*fMomentoPhi(x[1], x[3], x[0], x[2]);
+
+        // //Calculo de q2:
+        // q[1][0]=h*fPsi(x[1]+q[0][1]/2, x[3]+q[0][3]/2, x[0]+q[0][0]/2, x[2]+q[0][2]/2);
+        // q[1][1]=h*fPhi(x[1]+q[0][1]/2, x[3]+q[0][3]/2, x[0]+q[0][0]/2, x[2]+q[0][2]/2);
+        // q[1][2]=h*fMomentoPsi(x[1]+q[0][1]/2, x[3]+q[0][3]/2, x[0]+q[0][0]/2, x[2]+q[0][2]/2);
+        // q[1][3]=h*fMomentoPhi(x[1]+q[0][1]/2, x[3]+q[0][3]/2, x[0]+q[0][0]/2, x[2]+q[0][2]/2);
+
+        // //Calculo de q3:
+        // q[2][0]=h*fPsi(x[1]+q[1][1]/2, x[3]+q[1][3]/2, x[0]+q[1][0]/2, x[2]+q[1][2]/2);
+        // q[2][1]=h*fPhi(x[1]+q[1][1]/2, x[3]+q[1][3]/2, x[0]+q[1][0]/2, x[2]+q[1][2]/2);
+        // q[2][2]=h*fMomentoPsi(x[1]+q[1][1]/2, x[3]+q[1][3]/2, x[0]+q[1][0]/2, x[2]+q[1][2]/2);
+        // q[2][3]=h*fMomentoPhi(x[1]+q[1][1]/2, x[3]+q[1][3]/2, x[0]+q[1][0]/2, x[2]+q[1][2]/2);
+
+        // //Calculo de q4
+        // q[3][0]=h*fPsi(x[1]+q[2][1], x[3]+q[2][3], x[0]+q[2][0], x[2]+q[2][2]);
+        // q[3][1]=h*fPhi(x[1]+q[2][1], x[3]+q[2][3], x[0]+q[2][0], x[2]+q[2][2]);
+        // q[3][2]=h*fMomentoPsi(x[1]+q[2][1], x[3]+q[2][3], x[0]+q[2][0], x[2]+q[2][2]);
+        // q[3][3]=h*fMomentoPhi(x[1]+q[2][1], x[3]+q[2][3], x[0]+q[2][0], x[2]+q[2][2]);
+
+        // //Calculo de la nueva x
+        // for(i=0;i<4;i++){
+        //     x[i]=x[i]+(q[0][i]+2*q[1][i]+2*q[2][i]+q[3][i])/6;
+        // }
+        
+        // cont+=1;//Número de datos
+        // if(t==0){
+        //     distanciainicial=sqrt(pow(y[1]-x[1],2)+pow(fPhi(y[1],y[3], y[0], y[2])-fPhi(x[1],x[3], x[0], x[2]),2));
+        // }
+
+        t=t+h;
+        //Calculo de la distancia entre trayectorias
+        //distancia+=sqrt(pow(y[1]-x[1],2)+pow(fPhi(y[1],y[3], y[0], y[2])-fPhi(x[1],x[3], x[0], x[2]),2));
+
+        //fprintf(fichero_out, "%lf, %lf \n", x1, y1);
+        //fprintf(fichero_out, "%lf, %lf \n", x2, y2);
+        //fprintf(fichero_out, "\n");
+        //fprintf(ficheroEnergía, "%lf, %lf \n", y[1], y[0]);//Angulo-Angulo para mapa Poincare
+        //fprintf(ficheroVelocidad, "%lf, %lf \n", y[1], fPhi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PHI
+        //fprintf(ficheroVelocidad2, "%lf, %lf \n", y[0], fPsi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PSI
+     }
+    clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
+    double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;
+    printf("Tiempo de compilacion = %lf\n", tiempo);
+    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, Tmax);
+
+    //Lyapunov=(distancia)/(distanciainicial*Tmax);
+    //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
+    }
+
+    fclose(fichero_out);
+    fclose(ficheroEnergía);
+    fclose(ficheroVelocidad);
+    fclose(ficheroVelocidad2);
+    fclose(ficheroLyapunov);
+    fclose(ficheroOptimizacion);
 
     return 0;
 }
