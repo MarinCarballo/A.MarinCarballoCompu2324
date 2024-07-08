@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include <omp.h>
 #include "FuncionesPenduloDoble.h"
 #define pi 3.14
 
@@ -29,8 +28,8 @@ int main(){
 
     Lyapunov=0;
     double distancia, distanciainicial, cont;
-
-for(Tmax=1000; Tmax<1000000; Tmax=Tmax+1000){
+Tmax=1000000;
+for(h=0.001; h>0.000001; h=h-0.00001){
     clock_t begin = clock(); // Tiempo de compilacion
     t=0;
     distancia=0;
@@ -54,7 +53,6 @@ for(Tmax=1000; Tmax<1000000; Tmax=Tmax+1000){
 
     x[3]=2*x[3];//Momento phi
 
-    h=0.001;  
     while(t<Tmax){
         //Calculo de k1:
         k[0][0]=h*fPsi(y[1], y[3], y[0], y[2]);
@@ -138,7 +136,7 @@ for(Tmax=1000; Tmax<1000000; Tmax=Tmax+1000){
     clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
     double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("Tiempo de compilacion = %lf\n", tiempo);
-    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, Tmax);
+    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, h);
 
     //Lyapunov=(distancia)/(distanciainicial*Tmax);
     //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
