@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Cargar datos desde el archivo CSV
-file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/Energia.txt'
+file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/MapasPoincare/AnguloAngulo.txt'
 data = pd.read_csv(file_path)
 
 phi = data.iloc[:, 0]

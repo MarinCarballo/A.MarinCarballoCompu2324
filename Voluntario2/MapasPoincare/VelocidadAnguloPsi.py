@@ -4,7 +4,7 @@ params = {'mathtext.default': 'regular' }
 plt.rcParams.update(params)
 
 # Ruta del archivo CSV
-file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/PsiPunto.csv'
+file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/MapasPoincare/PsiPunto.csv'
 
 # Cargar datos desde el archivo CSV
 data = pd.read_csv(file_path)

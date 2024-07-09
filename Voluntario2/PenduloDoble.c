@@ -9,7 +9,7 @@
 int main(){
     FILE *fichero_out;
     fichero_out=fopen("PenduloDoble.txt", "w");
-    FILE* ficheroEnergía = fopen("Energia.txt", "w");
+    FILE* ficheroAngulo = fopen("AnguloAngulo.txt", "w");
     FILE* ficheroVelocidad = fopen("VelocidadAngulo.txt", "w");
     FILE* ficheroVelocidad2 = fopen("VelocidadAngulo2.txt", "w");
     FILE* ficheroLyapunov = fopen("Lyapunov.txt", "w");
@@ -30,9 +30,9 @@ int main(){
     Lyapunov=0;
     double distancia, distanciainicial, cont;//Variables de Lyapunov
 
-Tmax=10000;//Tiempo simulación Runge-Kutta
-h=0.01;//Paso
-for(h=0.001; h>=0.00001; h=h-0.0001){ //Esto se activa si se quiere hacer Lyapunov
+Tmax=10;//Tiempo simulación Runge-Kutta
+h=0.001;//Paso
+//for(Tmax=100; Tmax<1000; Tmax=Tmax+10){ //Esto se activa si se quiere hacer Lyapunov
     clock_t begin = clock(); // Tiempo de compilacion
     t=0;
     distancia=0;
@@ -133,12 +133,12 @@ for(h=0.001; h>=0.00001; h=h-0.0001){ //Esto se activa si se quiere hacer Lyapun
         //Calculo de la distancia entre trayectorias
         //distancia+=sqrt(pow(y[1]-x[1],2)+pow(fPhi(y[1],y[3], y[0], y[2])-fPhi(x[1],x[3], x[0], x[2]),2));
 
-        //fprintf(fichero_out, "%lf, %lf \n", x1, y1);
-        //fprintf(fichero_out, "%lf, %lf \n", x2, y2);
-        //fprintf(fichero_out, "\n");
-        //fprintf(ficheroEnergía, "%lf, %lf \n", y[1], y[0]);//Angulo-Angulo para mapa Poincare
-        //fprintf(ficheroVelocidad, "%lf, %lf \n", y[1], fPhi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PHI
-        //fprintf(ficheroVelocidad2, "%lf, %lf \n", y[0], fPsi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PSI
+        fprintf(fichero_out, "%lf, %lf \n", x1, y1);
+        fprintf(fichero_out, "%lf, %lf \n", x2, y2);
+        fprintf(fichero_out, "\n");
+        fprintf(ficheroAngulo, "%lf, %lf \n", y[1], y[0]);//Angulo-Angulo para mapa Poincare
+        fprintf(ficheroVelocidad, "%lf, %lf \n", y[1], fPhi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PHI
+        fprintf(ficheroVelocidad2, "%lf, %lf \n", y[0], fPsi(y[1],y[3], y[0], y[2]));//Velocidad-Angulo PSI
      }
     clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
     double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -148,10 +148,10 @@ for(h=0.001; h>=0.00001; h=h-0.0001){ //Esto se activa si se quiere hacer Lyapun
 
     //Lyapunov=(distancia)/(distanciainicial*Tmax);
     //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
-    }//Activar este corchete de abajo si se activa Lyapunov
+    //}//Activar este corchete de abajo si se activa Lyapunov
 
     fclose(fichero_out);
-    fclose(ficheroEnergía);
+    fclose(ficheroAngulo);
     fclose(ficheroVelocidad);
     fclose(ficheroVelocidad2);
     fclose(ficheroLyapunov);
