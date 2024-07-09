@@ -30,9 +30,9 @@ int main(){
     Lyapunov=0;
     double distancia, distanciainicial, cont;//Variables de Lyapunov
 
-Tmax=30;//Tiempo simulación Runge-Kutta
+Tmax=10000;//Tiempo simulación Runge-Kutta
 h=0.01;//Paso
-for(Tmax=0; Tmax<=1000000; Tmax=Tmax+100000){ //Esto se activa si se quiere hacer Lyapunov
+for(h=0.001; h>=0.00001; h=h-0.0001){ //Esto se activa si se quiere hacer Lyapunov
     clock_t begin = clock(); // Tiempo de compilacion
     t=0;
     distancia=0;
@@ -143,7 +143,8 @@ for(Tmax=0; Tmax<=1000000; Tmax=Tmax+100000){ //Esto se activa si se quiere hace
     clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
     double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("Tiempo de compilacion = %lf\n", tiempo);
-    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, Tmax);
+    printf("%lf \n", h);
+    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, h);
 
     //Lyapunov=(distancia)/(distanciainicial*Tmax);
     //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
