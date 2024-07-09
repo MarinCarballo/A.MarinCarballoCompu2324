@@ -13,7 +13,7 @@ plt.figure(figsize=(10, 6))
 plt.plot(phi, psi, '-', linewidth=0.5, markersize=2, label='Ángulo ψ respecto a φ')  # Ajustar el grosor de las líneas y el tamaño de los marcadores
 
 # Añadir títulos y etiquetas
-plt.title('Mapa de Poincaré, E=15, [$φ_i$=0.1 rad, $ψ_i$=0.3 rad] ')
+plt.title('Mapa de Poincaré, E=1, [$φ_i$=0.1 rad, $ψ_i$=0.1 rad] ')
 plt.xlabel('φ (radianes)')
 plt.ylabel('ψ (radianes)')
 

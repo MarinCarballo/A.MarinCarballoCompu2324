@@ -14,7 +14,7 @@ plt.errorbar(data['T (K)'], data['Energia'], yerr=data['ErrorEnergia'], fmt='-',
 # Añadir etiquetas y título
 plt.xlabel('Temperatura (K)')
 plt.ylabel('Energía')
-plt.title('Energía vs Temperatura, N=64')
+plt.title('Energía vs Temperatura, N=128')
 plt.legend()
 
 # Mostrar la gráfica

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Leer el archivo CSV
-file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/Lyapunov2.csv'  # Reemplaza esto con la ruta a tu archivo CSV
+file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/Lyapunov/Lyapunov2.csv'  # Reemplaza esto con la ruta a tu archivo CSV
 data = pd.read_csv(file_path)
 
 # Asumiendo que la primera columna es t y las siguientes son las energías E=1, 3, 5, 10, 15

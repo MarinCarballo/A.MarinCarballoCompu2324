@@ -4,7 +4,8 @@ params = {'mathtext.default': 'regular' }
 plt.rcParams.update(params)
 
 # Ruta del archivo CSV
-file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/Energia.csv'
+file_path = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario2/MapasPoincare/AnguloAnguloTodos.csv'
+
 
 # Cargar datos desde el archivo CSV
 data = pd.read_csv(file_path)
@@ -25,7 +26,7 @@ for i, E in enumerate(energias_especificas):
     plt.plot(phi, psi, '-', linewidth=0.5, markersize=2, label=f'E={E}', color=colores[i])
 
 # Añadir títulos y etiquetas
-plt.title('Mapa de Poincaré [$φ_i$=0.1 rad, $ψ_i$=0.3 rad]')
+plt.title('Mapa de Poincaré [$φ_i$=0.1 rad, $ψ_i$=0.1 rad]')
 plt.xlabel('φ (rad)')
 plt.ylabel('ψ (rad)')
 

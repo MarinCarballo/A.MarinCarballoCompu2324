@@ -4,10 +4,10 @@
 #include <time.h>
 #include <omp.h>
 
-#define N 64// Numero de spins.
-#define Tmax 100000 // Pasos Montecarlo
-//double Temp[Tmax];
-//double Temp2[Tmax];
+#define N 128// Numero de spins.
+#define Tmax 100 // Pasos Montecarlo
+double Temp[Tmax];
+double Temp2[Tmax];
 
 void initialize_spins(int s[N][N]) {//Magnetización nula
     for(int i = 1; i < N-1; i++) {
@@ -86,18 +86,18 @@ int main () {
     FILE* ficheroDensidad = fopen("Densidad.txt", "w");
     FILE* ficheroEnergía = fopen("Energia.txt", "w");
 
-    double T=1;
+    double T=5;
     //double magSuperior[Tmax] = {0};
     //double magInferior[Tmax] = {0};
     double densidadplus[N]= {0};
     double densidadminus[N]= {0};
     double sigma[N];
     int s[N][N];
-    //initialize_spins(s); //Para magnetización nula.
+    initialize_spins(s); //Para magnetización nula.
     //random_magnetization(s); //Para magnetizacion aleatoria
-    //fill_boundaries(s);
+    fill_boundaries(s);
 
-//for (double T = 1; T < 6; T=T+0.2) {
+for (double T = 1; T < 6; T=T+0.2) {//Esto se activa si se quiere calcular un observable en función de T
         initialize_spins(s); //Mag. Nula
         //random_magnetization(s); //Mag. Aleatoria
         fill_boundaries(s);
@@ -109,7 +109,7 @@ int main () {
             double sumSuperior = 0;
             double sumInferior = 0;
 
-            #pragma omp parallel for
+            #pragma omp parallel for//Hilos
             for (int k = 0; k < N * N; k++) {
                 int w = rand() % (N-2) + 1; // Posición aleatoria, excluyendo primera y última fila.
                 int z = rand() % N; 
@@ -140,11 +140,11 @@ int main () {
                     if ((double)rand() / RAND_MAX > p) {
                         swap_spins(s, w, z, r); // Si el cambio NO es favorable, revierto el cambio.
                     }
-                    PromedioEnergia-=EC1;
+                    PromedioEnergia-=calculate_energy(s);
                 }
             }
             //Temp2[t]=PromedioEnergia;
-            if(t==99999){
+            if(t==499999){
                 for (int i = 0; i < N; i++) {
                     for (int j = 0; j < N-1; j++) {
                         fprintf(fichero_out, "%d, ", s[i][j]);
@@ -228,7 +228,7 @@ int main () {
         double VarianzaEnergia;
         VarianzaEnergia=0;
         for (int t=0; t<Tmax; t++){//Varianza Energía
-            //VarianzaEnergia+=pow(Temp2[t]/(Tmax*2*N) - PromedioEnergia, 2) / (Tmax);
+            VarianzaEnergia+=pow(Temp2[t]/(Tmax*2*N) - PromedioEnergia, 2) / (Tmax);
         }
         double ErrorEnergia = sqrt(VarianzaEnergia) / sqrt(Tmax);
         for(int i=0;i<N; i++){
@@ -239,7 +239,7 @@ int main () {
         //fprintf(ficheroDensidad, "%lf, %lf, %lf, %lf, %lf \n", conta, 3*errorDensidad, 1-conta, 3*errorDensidad, T); //DensidadPlus, DensidadMinus, 
         fprintf(ficheroEnergía, "%lf, %lf, %lf \n", PromedioEnergia, 3*ErrorEnergia, T);
         printf("Temperatura terminada");
-    //}//Fin temperatura
+    }//Fin temperatura
 
     fclose(fichero_out);
     fclose(ficheroMag);

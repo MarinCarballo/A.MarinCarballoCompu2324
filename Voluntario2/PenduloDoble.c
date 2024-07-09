@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <omp.h>
 #include "FuncionesPenduloDoble.h"
 #define pi 3.14
 
@@ -13,23 +14,25 @@ int main(){
     FILE* ficheroVelocidad2 = fopen("VelocidadAngulo2.txt", "w");
     FILE* ficheroLyapunov = fopen("Lyapunov.txt", "w");
     FILE* ficheroOptimizacion = fopen("Optimizacion.txt", "w");
-    double g=9.81, h, t, Tmax, m;
-    double y[4], x[4];
-    double k[4][4], q[4][4];
-    double E;
+    double g=9.81, h, t, Tmax;//Declaracion de constantes
+    double y[4], x[4];//Vectores Runge-Kutta
+    double k[4][4], q[4][4];//Vectores auxiliares Runge-Kutta
+    double E;//Energia
     int i, j;
-    double x1, y1, x2, y2;
+    double x1, y1, x2, y2;//Posiciones del péndulo
     x1=0;
     y1=0;
     x2=0;
     y2=0;
 
-    double Lyapunov;
+    double Lyapunov;//Coeficiente de Lyapunov
 
     Lyapunov=0;
-    double distancia, distanciainicial, cont;
-Tmax=1000000;
-for(h=0.001; h>0.000001; h=h-0.00001){
+    double distancia, distanciainicial, cont;//Variables de Lyapunov
+
+Tmax=30;//Tiempo simulación Runge-Kutta
+h=0.01;//Paso
+for(Tmax=0; Tmax<=1000000; Tmax=Tmax+100000){ //Esto se activa si se quiere hacer Lyapunov
     clock_t begin = clock(); // Tiempo de compilacion
     t=0;
     distancia=0;
@@ -44,14 +47,15 @@ for(h=0.001; h>0.000001; h=h-0.00001){
 
     y[3]=2*y[3];//Momento phi
 
-    double E2=15.5;
+    //Lyapunov
+    //double E2=15.5;
     //Otras condiciones iniciales, para calcular el coeficiente de Lyapunov.
-    x[0]=0.3; //Psi
-    x[1]=0.1; //Phi
-    x[3]=sqrt(E2-2*g*(1-cos(x[1]))-g*(1-cos(x[0]))); //Velocidad de Phi
-    x[2]=x[3]*cos(x[0]-x[1]); //Momento de Psi
+    //x[0]=0.3; //Psi
+    //x[1]=0.3; //Phi
+    //x[3]=sqrt(E2-2*g*(1-cos(x[1]))-g*(1-cos(x[0]))); //Velocidad de Phi
+    //x[2]=x[3]*cos(x[0]-x[1]); //Momento de Psi
 
-    x[3]=2*x[3];//Momento phi
+    //x[3]=2*x[3];//Momento phi
 
     while(t<Tmax){
         //Calculo de k1:
@@ -83,11 +87,14 @@ for(h=0.001; h>0.000001; h=h-0.00001){
             y[i]=y[i]+(k[0][i]+2*k[1][i]+2*k[2][i]+k[3][i])/6;
         }
         
-        //x1=sin(y[1]);
-        //y1=-cos(y[1]);
-        //x2=x1+sin(y[0]);
-        //y2=y1-cos(y[0]);
+        x1=sin(y[1]);
+        y1=-cos(y[1]);
+        x2=x1+sin(y[0]);
+        y2=y1-cos(y[0]);
 
+        //****************************LYAPUNOV: //Esto se activa si se quiere hacer Lyapunov*********
+        //Lo que hace esto es calcular otra trayectoria con otro runge-kutta para las otras condicones de contorno
+        //Después va calculando las distancias entre trayectorias en cada paso de Tmax.
         //Calculo de q1:
         // q[0][0]=h*fPsi(x[1], x[3], x[0], x[2]);
         // q[0][1]=h*fPhi(x[1], x[3], x[0], x[2]);
@@ -118,7 +125,7 @@ for(h=0.001; h>0.000001; h=h-0.00001){
         // }
         
         // cont+=1;//Número de datos
-        // if(t==0){
+        // if(t==0){ //DISTANCIA INICIAL
         //     distanciainicial=sqrt(pow(y[1]-x[1],2)+pow(fPhi(y[1],y[3], y[0], y[2])-fPhi(x[1],x[3], x[0], x[2]),2));
         // }
 
@@ -136,11 +143,11 @@ for(h=0.001; h>0.000001; h=h-0.00001){
     clock_t end = clock(); // Tiempo que ha tardado en ejecutarse
     double tiempo = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("Tiempo de compilacion = %lf\n", tiempo);
-    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, h);
+    fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, Tmax);
 
     //Lyapunov=(distancia)/(distanciainicial*Tmax);
     //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
-    }
+    }//Activar este corchete de abajo si se activa Lyapunov
 
     fclose(fichero_out);
     fclose(ficheroEnergía);
