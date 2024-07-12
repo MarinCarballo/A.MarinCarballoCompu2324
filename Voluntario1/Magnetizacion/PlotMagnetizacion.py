@@ -2,28 +2,28 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Cargar datos desde el archivo CSV
-filename = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario1/Magnetizacion.txt'
-data = pd.read_csv(filename, header=None, names=['MagSuperior', 'ErrorSup', 'MagInferior', 'ErrorInf', 'Temperatura'])
+filename = 'C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario1/PromedioDensidad.txt' 
+data = pd.read_csv(filename, header=None, names=['Plus', 'Minus', 'Temperatura'])
 
-# Calcular la magnetización total
-data['MagTotal'] = data['MagSuperior'] + data['MagInferior']
+# Calcular la densidad total (Plus + Minus)
+data['Plus_Minus'] = data['Plus'] + data['Minus']
 
 # Graficar los datos
 plt.figure(figsize=(10, 6))
 
-# Graficar la magnetización superior
-plt.errorbar(data['Temperatura'], data['MagSuperior'], yerr=data['ErrorSup'], fmt='-', linewidth=1, capsize=5, elinewidth=2, label='Magnetización Superior', color='blue')
+# Graficar la densidad Plus
+plt.plot(data['Temperatura'], data['Plus'], 'o-', linewidth=1, label='Densidad Plus', color='blue')
 
-# Graficar la magnetización inferior
-plt.errorbar(data['Temperatura'], data['MagInferior'], yerr=data['ErrorInf'], fmt='-', linewidth=1, capsize=5, elinewidth=2, label='Magnetización Inferior', color='red')
+# Graficar la densidad Minus
+plt.plot(data['Temperatura'], data['Minus'], 'o-', linewidth=1, label='Densidad Minus', color='brown')
 
-# Graficar la magnetización total
-plt.plot(data['Temperatura'], data['MagTotal'], '-.', linewidth=1, label='Magnetización Total', color='green')
+# Graficar la densidad total (Plus + Minus)
+plt.plot(data['Temperatura'], data['Plus_Minus'], 'o-.', linewidth=1, label='Densidad Plus + Minus', color='red')
 
 # Añadir etiquetas y título
-plt.xlabel('Temperatura (K)')
-plt.ylabel('Magnetización (1/Am)')
-plt.title('Magnetización vs Temperatura: N=64, 50000 Pasos Montecarlo')
+plt.xlabel('Temperatura')
+plt.ylabel('Densidad')
+plt.title('Densidad Plus, Minus y su Suma en función de la Temperatura. Magnetización NO NULA')
 plt.legend()
 
 # Mostrar la gráfica

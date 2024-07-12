@@ -1,3 +1,5 @@
+//ANTIGUO PROGRAMA DE KAWASAKI, IGNORAR YA QUE NO ESTÁ OPTIMIZADO.
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>

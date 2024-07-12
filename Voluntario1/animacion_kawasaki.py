@@ -8,7 +8,7 @@ import io
 # ========================================
 file_in = "C:/Users/anton/OneDrive/Escritorio/A.MarinCarballoCompu2324/A.MarinCarballoCompu2324/Voluntario1/Kawasaki.txt" # Nombre del fichero de datos
 file_out = "KawasakiMNule" # Nombre del fichero de salida (sin extensión)
-interval = 100000 # Tiempo entre fotogramas en milisegundos
+interval = 1 # Tiempo entre fotogramas en milisegundos
 save_to_file = False# False: muestra la animación por pantalla,
                      # True: la guarda en un fichero
 dpi = 150 # Calidad del vídeo de salida (dots per inch)

@@ -1,7 +1,3 @@
 Computational physics repository
-Obligatorio1: Solar System using Verlet algorithm, in C.
-Obligatorio2: Ising Model using Metropolis algorithm, in Python.
-Ising pero en c: Ising Model using Metropolis algorithm, in C.
-Oligatorio3: Solving Schrodinger equation for a cuadratic well, in C.
-Obligatorio4: Solving 3 body problem with Runge-Kuta, in C.
-Voluntario 1: Kawasaki Model in C.
+Voluntario Kawasaki: El programa que hay que ejecutar es "KawasakiOptimized.c", en este se ha usado IA para mejorar la escritura.
+Voluntario péndulo: En este programa se ejecuta "PenduloDoble.c", dentro están las especificaciones según lo que se quiera. En este NO se ha usado IA.
