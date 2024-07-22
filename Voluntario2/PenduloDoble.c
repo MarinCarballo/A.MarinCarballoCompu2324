@@ -26,8 +26,6 @@ int main(){
     y2=0;
 
     double Lyapunov;//Coeficiente de Lyapunov
-
-    Lyapunov=0;
     double distancia, distanciainicial, cont;//Variables de Lyapunov
 
 Tmax=10;//Tiempo simulación Runge-Kutta
@@ -35,6 +33,7 @@ h=0.001;//Paso
 //for(Tmax=100; Tmax<1000; Tmax=Tmax+10){ //Esto se activa si se quiere hacer Lyapunov
     clock_t begin = clock(); // Tiempo de compilacion
     t=0;
+    Lyapunov=0;
     distancia=0;
     distanciainicial=0;
     cont=0;
