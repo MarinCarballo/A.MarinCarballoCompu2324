@@ -132,6 +132,7 @@ h=0.001;//Paso
         t=t+h;
         //Calculo de la distancia entre trayectorias
         //distancia+=sqrt(pow(y[1]-x[1],2)+pow(fPhi(y[1],y[3], y[0], y[2])-fPhi(x[1],x[3], x[0], x[2]),2));
+        //Lyapunov+=log(distancia/distanciainicial);
 
         fprintf(fichero_out, "%lf, %lf \n", x1, y1);
         fprintf(fichero_out, "%lf, %lf \n", x2, y2);
@@ -146,7 +147,7 @@ h=0.001;//Paso
     printf("%lf \n", h);
     fprintf(ficheroOptimizacion, "%lf, %lf \n", tiempo, h);
 
-    //Lyapunov=(distancia)/(distanciainicial*Tmax);
+    //Lyapunov=(Lyapunov)/(Tmax);
     //fprintf(ficheroLyapunov, "%lf, %lf \n", Lyapunov, Tmax);
     //}//Activar este corchete de abajo si se activa Lyapunov
 
